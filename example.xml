@@ -1,24 +1,24 @@
 <scene width="500" height="400" bgcolor="000040">
 
-	<bitmap x="100" y="150" src="sign.gif">
-		<scale dur="1" repeatCount="Infinity" initialScale=".5" finalScale="1" />
-	</bitmap>
+    <bitmap x="100" y="150" src="sign.gif">
+        <scale dur="1" repeatCount="Infinity" initialScale=".5" finalScale="1" />
+    </bitmap>
 
-	<bitmap x="200" y="150" src="sign.gif">
-		<rotate dur="1" repeatCount="Infinity" initialAngle="0" finalAngle="360" />
-	</bitmap>
+    <bitmap x="200" y="150" src="sign.gif">
+        <rotate dur="1" repeatCount="Infinity" initialAngle="0" finalAngle="360" />
+    </bitmap>
 
-	<bitmap x="300" y="150" src="sign.gif">
-		<path 
-		    repeatCount="Infinity" 
-			dur="1"
-			points="m 0.0 0.0
-					c	54.9	0.0	98.7	-44.9	98.7	-99.9
-					c	98.7	-44.9	143.2	-0.4	198.2	-0.4
-					c	143.2	-0.4	99.4	44.5	99.4	99.5
-					c	99.4	44.5	54.9	0.0	0.0	0.0
-					x"
-		/>
-	</bitmap>
-	
+    <bitmap x="300" y="150" src="sign.gif">
+        <path 
+            repeatCount="Infinity" 
+            dur="1"
+            points="m 0.0 0.0
+                    c   54.9    0.0 98.7    -44.9   98.7    -99.9
+                    c   98.7    -44.9   143.2   -0.4    198.2   -0.4
+                    c   143.2   -0.4    99.4    44.5    99.4    99.5
+                    c   99.4    44.5    54.9    0.0 0.0 0.0
+                    x"
+        />
+    </bitmap>
+    
 </scene>

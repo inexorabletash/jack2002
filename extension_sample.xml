@@ -1,17 +1,17 @@
 <scene width="500" height="400" bgcolor="404040">
 
-	<oval
-		class="Extension"
-		x="100"
-		Y="100"
-		width="100"
-		height="200"
-	>
-		<path 
-		    repeatCount="5"
-			dur="2"
-			points="m 450.0 0.0 m -250.0 0.0 x"
-		/>
-	</oval>
-	
+    <oval
+        class="Extension"
+        x="100"
+        Y="100"
+        width="100"
+        height="200"
+    >
+        <path 
+            repeatCount="5"
+            dur="2"
+            points="m 450.0 0.0 m -250.0 0.0 x"
+        />
+    </oval>
+    
 </scene>
