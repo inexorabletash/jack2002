@@ -1,0 +1,57 @@
+<scene width="500" height="400" bgcolor="000040">
+
+	<text 
+		x="100" 
+		y="50" 
+		text="First" 
+		family="Serif" 
+		size="60" 
+		color="ff0000" 
+		bgcolor="000000"
+		onenter="num1.start"
+		onexit="num1.stop"
+	>
+	</text>
+
+	<text 
+		x="100" 
+		y="150" 
+		text="Second" 
+		family="Serif" 
+		size="60" 
+		color="ff0000" 
+		bgcolor="000000"
+		onenter="num2.start"
+		onexit="num2.stop"
+	>
+	</text>
+
+	<text 
+		x="100" 
+		y="250" 
+		text="Third" 
+		family="Serif" 
+		size="60" 
+		color="ff0000" 
+		bgcolor="000000"
+		onenter="num3.start"
+		onexit="num3.stop"
+	>
+	</text>
+
+
+	<text id="num1" begin="Infinity" x="400" y="200" size="100" color="ffff00" text="1">
+		<color dur="1" initialColor="000040" finalColor="ffff00" fill="hold" />
+		<scale dur="1" finalScale="1.5" fill="hold" />
+	</text>
+	<text id="num2" begin="Infinity" x="400" y="200" size="100" color="ffff00" text="2">
+		<color dur="1" initialColor="000040" finalColor="ffff00" fill="hold" />
+		<scale dur="1" finalScale="1.5" fill="hold" />	
+	</text>
+	
+	<text id="num3" begin="Infinity" x="400" y="200" size="100" color="ffff00" text="3">
+		<color dur="1" initialColor="000040" finalColor="ffff00" fill="hold" />
+		<scale dur="1" finalScale="1.5" fill="hold" />		
+	</text>
+
+</scene>

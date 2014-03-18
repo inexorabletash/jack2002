@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<title>JACK2002</title>
+<style type="text/css">
+body, td
+{
+  font: 10pt verdana;
+}
+.definition
+{
+  border: 1pt solid black;
+  margin: 10pt;
+  padding: 4pt;
+}
+blockquote
+{
+  margin-top: 4pt;
+  margin-bottom: 4pt;
+}
+table
+{
+  border: 1pt solid black;
+  border-collapse: collapse;
+}
+td
+{
+  border: 1pt solid black;
+  padding-top: 1pt;
+  padding-bottom: 1pt;
+  padding-left: 2pt;
+  padding-right: 2pt;
+}
+td.indent
+{
+  padding-left: 8pt;
+}
+.aside
+{
+  display: inline-block;
+  float: right;
+  border: 1pt solid black;
+  margin: 20px;
+  margin-top: 0;
+  padding: 10px;
+  width: 200px;
+  font-size: 75%;
+}
+div.aside, p
+{
+text-align: justify;
+}
+body { width: 600px; margin-left: 40px;}
+</style>
+    <div>
+      <h1>JACK2002</h1>
+      <h2>Background</h2>
+      <p>From 1996 through 1998 I worked as a junior developer on an application titled "Liquid Motion".
+        The application first saw life as an offering from a small startup named Dimension X and was actually
+        released as "Liquid Motion Pro", but following that company's acquisition by Microsoft, and after
+        substantially more development effort, it was rebranded as Microsoft Liquid Motion.
+      <div class="aside">
+        After the acquisition by Microsoft we introduced another runtime based on the
+        <a href="http://www.sworks.com/keng/da.html">DirectAnimation</a> multimedia runtime plus a virtual machine
+        interpreter, and a binary file format that targeted the virtual machine. This runtime allowed for much richer
+        animation based on the underlying DirectDraw and Direct3D platforms, but I won't discuss that here.</div>
+      <p>The application was an animation authoring tool for web developers (loosely comparable with Macromedia Flash).
+        It output animation files in the "JACK" format (for an early name for the product, Java Animation Construction
+        Kit) with the JCK extension (conceptually similar to the SWF format). The runtime was an "applet" - a set
+        of Java classes which would be downloaded to the client Web browser when visiting a page hosting an animation.
+
+      <p>The Java-based runtime was the advantage which was promoted over the competitive product, Macromedia Flash.
+        At the time, Java was widely supported by Web browsers (predominantly Netscape Navigator 2.0 and Microsoft
+        Internet Explorer 3.0). When navigating to a page containing a Java applet, the browsers would download
+        the Java class files, cache them locally (for fast access when returning to the page), and run the applet
+        in a sandboxed virtual machine - all without prompting the user or requiring setup steps, and independently
+        of the operating system (Windows, Macintosh, Unix). In contrast, the Flash web runtime (Shockwave for Flash,
+        hence the SWF extension) was a binary plugin component which was not available cross-platform, and had to
+        be downloaded and installed manually before a page containing the animation was correctly visible. Also,
+        the Liquid Motion runtime was extensible - the JCK file could call on a custom Java class type added by
+        a developer which would also be seamlessly downloaded. At the time, this sort of extensibility was not supported
+        by Flash.
+
+      <div class="aside">
+          For completeness, I should also mention Liquid Motion's successor: <strong>Microsoft Vizact 2000</strong>.
+          Whereas Liquid Motion (like Flash) created animations that ran "in a box" on the Web page, Vizact animated
+          "outside the box" - it let you animate arbitrary content on a Web page. If Liquid Motion's competitor
+          was Flash, Vizact's competitor was Dreamweaver. You could load a web page, select an image and animate
+          it on a motion path, or select a paragraph and set it to appear when the user clicked on a title. The
+          timing and behavior concepts were otherwise the same, although it was much more powerful, with a visual
+          interactivity system, wizards, media browsing, and a far more powerful timeline.
+
+        <p>
+          The user interface was generally aligned with Microsoft Office 2000, and the product was targetted at
+          office workers who needed to take static content (e.g. a Word document saved as HTML) and "activate
+          it" for the Web - a not entirely crazy idea circa 1999. There's a decent review
+          <a href="http://smw.internet.com/symm/reviews/vizact/">here</a>.
+        <p>
+          Although I was very proud of working on Vizact, it really went after a niche (or non-existent) market.
+          Web developers had tools they were happy with (Flash, Dreamweaver), and office workers asked "can I
+          use this animation in PowerPoint?" - so after shipping Vizact, we took our expertise and added new
+          <a href="http://en.wikipedia.org/wiki/PowerPoint_animation">animation capabilities</a> to PowerPoint
+          2002 in Microsoft Office XP.
+      </div>
+      <p>The web animation landscape changed rapidly along several axes. On the Windows platform, the addition of
+        ActiveX download support enabled single-click install, letting non-technical users get a seamless experience.
+        As Flash became a <em>de facto</em> standard, Web browser vendors started including it in the browser setup,
+        eliminating the deployment hit. Flash also evolved to include a scripting language (Lingo) and richer multimedia
+        capabilities. Finally, the legal battles between Sun and Microsoft over adherence to licensing requirements
+        (or the right to extend the language, depending on who you ask) effectively killed client-side Java use.
+        So Liquid Motion didn't last long in the marketplace.
+      <p>That's not to say that Liquid Motion wasn't without its own faults.
+
+      <h3>Behavior-based vs. Frame-based</h3>
+      <p>The fundamental animation paradigm in Liquid Motion was <em>behavior-based</em>, rather than Flash's <em>
+        frame-based</em> model. In a behavior-based model, animations and events are produced by objects called
+        <em>behaviors</em> which apply to another class of objects called <em>actors</em>. For example, an image
+        is an actor, and a motion path is a behavior. A motion path applied to an image is what makes an image move
+        over time. The motion path contains information about the actual path (typically a series of points which
+        are interpolated) and timing (when does the behavior start and stop, does it repeat, etc).
+
+      <p>The behavior interacts with the actor by changing the actor's properties based on the current time. For
+        example, a motion path behavior simply changes the actor's position over time; a transition behavior changes
+        the visual filter applied to an actor over time. Behaviors can be very complex - for example, a behavior
+        can be implemented which sets the actor's position to the current position of the mouse pointer - which
+        will cause the actor to follow the mouse. This behavior can then be used to implement a range of effects
+        from custom cursors to drag-and-drop of objects within an animation.
+
+      <p>This leads to a concept called a <em>scene graph</em>, where the state of the animation at any point time
+        (e.g. for playing the animation, or interactively editing it) can be determined by evaluating the contribution
+        of all of the behaviors and actors. This is extremely elegant, in that multiple behaviors can cooperate
+        to create very complex interactive and non-interactive effects.
+      <p>This is in contrast to frame-based animation, in which the actor's state is defined at multiple points in
+        time, called <em>key frames</em>. Typically, the animation author positions an actor at a starting position
+        at time t=0, and then sets a different position for the actor at some later time, say t=10. When the animation
+        runs, the position is interpolated over that time range. To handle interactivity like following the mouse,
+        user specified code is usually required.
+
+      <p>I'll go out on a limb and hypothesize that, in most cases, frame-based animation is actually simpler to
+        author. A frame-based animation authoring environment corresponds closely to the WYSIWYG paradigm - as an
+        animator, you go to frame X and specify how everything will appear. Then you go to frame Y and specify how
+        everything should appear. You let the tool figure out frames X+1, X+2 ... Y-2, Y-1 and tweak any if necessary.
+        In contrast, a time-based animation tool typically requires the animator to select the behavior and parameters
+        in a somewhat abstract sense. Either the tool needs to emulate the ability to tweak intermediate frames
+        (by generating additional behaviors) or the animator must understand the runtime mechanism at a deep level.
+
+      <div class="aside">
+        Word 2002's Styles and Formatting task pane does an amazing job of merging the two approaches - it's one
+        of my favorite pieces of UI in all of computer-dom and something I use heavily on a daily basis. You can
+        be lazy and use direct formatting, then come back and "clean up" and apply structure. It allows a very ad-hoc
+        approach to formatting without compromising the results.</div>
+
+      <p>Since most animators are graphical artists rather than software developers, providing an easy to use canvas
+        for creating animations - even if it's a more tedious canvas - is a clear advantage. In the same way, direct
+        formatting (swipe text and make it bold) is used far more commonly than named styles in Word; the latter
+        requires a structured approach, background knowledge and planning.
+
+      <h3>Runtime Size and Capabilities</h3>
+      <p>The Liquid Motion runtime (JACK) was designed in conjunction with the authoring platform - which was also
+        a Java application. Indeed, the same object-oriented classes existed for the same objects (in slightly different
+        flavors) at both design-time and runtime. This greatly eased the extensibility story - for example, to add
+        a new type of multimedia element (called an <em>actor</em>) to Liquid Motion you simply created a new Java
+        class, say FormButton. This FormButton would implement design-time properties and participate with design-time
+        features (selection UI, property dialogs, serialization, etc.) as well as runtime features (rendering, animating,
+        de-serializing, etc.).
+
+      <p>This object-oriented nature extended into the rest of the application and runtime - for example, there were
+        serialization and de-serialization classes, base classes for actors and behaviors as well as classes for
+        each actor and behavior type, objects for handling vector shapes, etc. While this made the development of
+        the application extremely rapid and simple, the runtime suffered.
+
+      <p>The JACK runtime came in around 270k - which was comparable to the size of the Flash runtime. During the
+        mid-1990's - pre-broadband - that was a substantial download size relative to an animated GIF. While not
+        all of the class files were necessarily downloaded each time it was still a large hit. Much of the size
+        was due to the approximately 50 class files - each Java class file has an approximate 2k overhead, before
+        any of the specific code is accounted for.
+
+      <p>One of my tasks as a junior developer on the team was to look at optimizing the size of the runtime. I probably
+        shaved 50k off with various approaches - for example, detecting methods that were not necessary at runtime
+        or could be eliminated, better use of inheritance, etc. 220k is better than 270k, but not by much. The size
+        of the runtime limited adoption during the early period before Flash reached critical mass, since prospective
+        users had to justify the substantial download for site visitors. Although I think the other factors mentioned
+        above were an order of magnitude more important to the demise of Liquid Motion, this is still something
+        that has bothered me throughout the years.
+
+      <h2>Fast Forward - JACK2002</h2>
+
+      <p>Several years later (Fall 2002) after having several more years of development experience under my belt,
+        I suddenly realized (4 years too late) that I knew how to shrink the runtime size down dramatically. I hadn't
+        done any Java development in a few years but I dusted off my copy of VJ++ and got to work. I followed a
+        handful of key mantras:
+
+      <ul>
+        <li>Don't get fancy - you're developing an animation runtime, not an application
+        <li>Have a goal - in this case, small execution size; verify every change to avoid size regressions
+        <li>Count on Moore's Law - re-parsing a string into an float every frame seems like a bad idea, but
+            when considering the tradeoff (larger class size) the performance cost is minimal
+        <li>Be prepared to compromise - you may not get 100% of your design, but 90% may be good enough
+
+      </ul>
+
+      <p>The end result was a runtime comparable to the JACK format in ~20k, with a few new features in some cases.
+        This was achieved with the following high-level approaches:
+
+      <ul>
+        <li>A single polymorphic class file. Rather than one class file per object type, it's old-school - a
+            single class with an enumerated type, and lots of switch statements. Saves 2k per type.
+
+        <li>A simplified, generalized parser. Instead of having dedicated parsers for each data type, an XML-like
+            syntax is used which generates an object tree (which corresponds to the runtime tree).
+
+        <li>Make use of the class library. The attributes for each parsed element are just dumped into a standard
+            Java Hashtable class.
+
+        <li>Little or no validation. Assume the authoring tool will output valid files, and developers who hand-tweak
+            the file will fix buggy animations. This flies in the face of conventional wisdom, but for a sandboxed
+            runtime it's perfectly acceptable. (Note that if this was not sandboxed there would be tons of security
+            issues.)
+
+        <li>Re-use everything. For example, rather than using new member variables specific to each actor or
+            behavior-type, the attribute hash table is used to store everything in named slots, which cuts down
+            on the size of the class file.
+
+        <li>Go big. The Java 1.0 image APIs didn't support rotating images, but the code is pretty simple so
+            I slipped it in. And once you have that, you might as well do text - it was just a little extra
+            work. I didn't get as far as making it anti-aliased, though.
+
+        <li>Keep it flexible. I was able to keep the extensibility mechanism; you simply give an attribute pointing
+            at your replacement class implementation, declare the interface, and divest yourself of responsibility.
+            A developer is likely to test their work so you don't have to hold their hand by adding extra validation
+            code.
+
+        <li>Know when enough is enough. I almost added a scripting language to handle events. Then I realized
+            that start &amp; stop are enough; anyone who needs more can write new classes.
+
+        <li>
+          Standards are (mostly) a good thing. I based the timing model loosely on
+          <a href="http://www.w3.org/TR/smil20/">SMIL 2.0</a> - which was based on the 
+          <a href="http://www.w3.org/TR/NOTE-HTMLplusTIME">HTML+TIME</a> which came out
+          of the Vizact work which evolved from Liquid Motion. Hmmm, that's kind of sneaky, isn't it? Size trumps
+          everything, though, so it's not anywhere close to standards compliant.
+
+        <li>
+          No assumptions. After every change to the code, recompile (in Release mode) and check the file size
+          in bytes. If there are two ways to accomplish the same thing (e.g. caching a value versus recalculating
+          it) try both - which will result in the smaller class file is not always obvious.
+      </ul>
+
+      <h3>Features</h3>
+
+      <p>
+        <table>
+          <tr>
+            <th style="width: 24%">Feature
+            <th style="width: 19%">JACK
+            <th style="width: 19%">Vizact
+            <th style="width: 19%">SMIL 2.0
+            <th style="width: 19%">JACK2002
+
+          <tr>
+            <td class="indent">File Format
+            <td>Custom
+            <td>HTML+TIME
+            <td>XML
+            <td>pseudo-XML
+
+          <tr>
+            <td><b>Timelines</b>
+            <td>
+            <td>
+            <td>
+            <td>
+
+          <tr>
+            <td class="indent">Parallel
+            <td>
+            <td>t:par
+            <td>par
+            <td>par
+
+
+          <tr>
+            <td class="indent">Sequence
+            <td>
+            <td>t:seq
+            <td>seq
+            <td>seq
+
+          <tr>
+            <td class="indent">Exclusive
+            <td>
+            <td>
+            <td>excl
+            <td>
+
+          <tr>
+            <td><b>Actors</b>
+            <td>
+            <td>
+            <td>
+            <td>
+
+
+          <tr>
+            <td class="indent">Scene
+            <td>Scene
+            <td>div (HTML)
+            <td>
+            <td>scene
+
+          <tr>
+            <td class="indent">Images
+            <td>ImageSequence
+            <td>img
+            <td>img
+            <td>bitmap
+
+          <tr>
+            <td class="indent">Vector Shapes
+            <td>VectorActor
+            <td>VML
+            <td>animation
+            <td>vector
+
+          <tr>
+            <td class="indent">Text
+            <td>TextSequence
+            <td>HTML
+            <td>text
+            <td>text
+
+          <tr>
+            <td class="indent">Audio
+            <td>AudioSequence
+            <td>t:audio
+            <td>audio
+            <td>sound
+
+          <tr>
+            <td class="indent">Particle Effects
+            <td>MagicActor<sup>*</sup>
+            <td>
+            <td>
+            <td>
+
+          <tr>
+            <td><b>Behaviors</b>
+            <td>
+            <td>
+            <td>
+            <td>
+
+          <tr>
+            <td class="indent">Motion Path
+            <td>MotionPath
+            <td>an:move
+            <td>animateMotion
+            <td>path
+
+          <tr>
+            <td class="indent">Scale
+            <td>Pulsate
+            <td>an:scale
+            <td>animate<sup>**</sup>
+            <td>scale
+
+          <tr>
+            <td class="indent">Rotation
+            <td>Spin
+            <td>an:rotate
+            <td>animate<sup>**</sup>
+            <td>rotate
+
+          <tr>
+            <td class="indent">Color
+            <td>ColorCycle<sup>***</sup>
+            <td>an:color
+            <td>animateColor
+            <td>color
+
+          <tr>
+            <td class="indent">Random Motion
+            <td>Jump
+            <td>
+            <td>
+            <td>
+
+          <tr>
+            <td><b>Interactivity</b>
+            <td>
+            <td>
+            <td>
+            <td>
+
+          <tr>
+            <td class="indent">Mouse Following
+            <td>AvoidFollow
+            <td>
+            <td>
+            <td>
+
+          <tr>
+            <td class="indent">Interactivity
+            <td>Trigger
+            <td>onclick
+            <td>
+            <td>onclick
+
+          <tr>
+            <td class="indent">Hyperlink
+            <td>URLLink
+            <td>a (HTML)
+            <td>a
+            <td>onclick
+
+          <tr>
+            <td><strong>Other</strong>
+            <td>
+            <td>
+            <td>
+            <td>
+
+          <tr>
+            <td class="indent">Transitions
+            <td>
+            <td>an:effect
+            <td>
+            <td>
+
+          <tr>
+            <td class="indent">Filters
+            <td>
+            <td>an:actor
+            <td>
+            <td>
+
+        </table>
+
+      <p><small><sup>*</sup> The particle effects ("Magic") were one of my first additions to Liquid Motion. The idea
+        came from a storyboard for animated advertisements. At one point the team started working on a product called
+        "Liquid ProMotion" which would output banner ads. The ads were Java applets specific to the animation (rather
+        than being a generic runtime) with the class files plus media in the 10-20k range permitted at the time.
+        The storyboard included Disney-esque sparkles; I came up with a simple particle system algorithm with mouse
+        movements triggering particle generation. We decided to roll the effect into Liquid Motion and added several
+        other variants, such as bubbles, clouds and smoke. </small>
+
+      <p><small><sup>**</sup> SMIL uses generic animation primitives (<em>animate</em> and <em>set</em>) which act on
+        arbitrary properties (another idea from Vizact). So instead of manipulating a scale property you animate
+        both width and height. </small>
+
+      <p><small><sup>***</sup> ColorCycle (which begat SMIL's animateColor) was another early addition of mine to Liquid
+        Motion inspired by <a href="http://en.wikipedia.org/wiki/Palette-shifting">color palette animation</a>,
+        a popular animation trick in the early 1990s.</small>
+
+      <h2>File Format</h2>
+
+      <h3>Grammar</h3>
+
+      <p>Pseudo-XML Syntax:
+
+      <p>Grammar:
+
+      <blockquote>
+        <p>element ::= ws* ( (opentag element* closetag ) | emptytag )?
+        <p>emptytag ::= '&lt;' tagname (ws* attribute)* '/' '&gt;'
+        <p>opentag ::= '&lt;' tagname (ws* attribute)* '&gt;'
+        <p>closetag ::= '&lt;' '/' ws* '&gt;'
+        <p>attribute ::= attrname ws* '=' ws* '&quot;' [^&quot;]* '&quot;'
+        <p>tagname ::= alphanumeric+
+        <p>attrname ::= alphanumeric+
+        <p>alphanumeric ::= [a-zA-Z0-9]
+        <p>ws ::= <em>space</em> | <em>tab</em> | <em>newline</em> | <em>linefeed</em>
+      </blockquote>
+
+      <p>Some of the many differences from real XML:
+      <ul>
+        <li>The text in close tags is ignored - it is assumed that the tags match.
+        <li>Comments (&lt;!-- comment --&gt;) are not supported.
+        <li>Text nodes are not supported (it's all attribute-based content).
+        <li>Processing instructions are not supported (and the XML PI is not required).
+        <li>Only double quotes (&quot;) can be used for attribute values.
+        <li>No namespaces.
+        <li>No encoding declaration. <em>This is a bug - it relies on the default system encoding!</em>
+        <li>No escaping mechanism. As a consequence, double quotes (&quot;) aren't supported in strings!
+      </ul>
+
+
+      <h3>Common Attribute Sets</h3>
+      <div class="definition">
+        <p>
+          <em>core attribute set</em>
+        <blockquote>
+          <p>id = <em>unique id</em>
+          <p>
+            class = <em>extension class name; if specified, an instance of the specified class is instantiated.
+            The class must be a subclass of Anim and override onLoad(), onTick(), onPaint(), onClick() and onEvent()
+            as appropriate. The root element cannot be an extension class.</em>
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          <em>timing attribute set</em>
+        <blockquote>
+          <p>begin = <em>start time, in seconds; double; default</em> 0
+          <p>end = <em>end time, in seconds; double; default</em> Infinity
+          <p>dur = <em>duration, in seconds; double; default</em> Infinity
+          <p>repeatCount = <em>number of repetitions; double; default</em> 1.0
+          <p>fill = "remove" | "hold"; <em>default</em> remove
+        </blockquote>
+      </div>
+      <h3>Timing Elements</h3>
+      <div class="definition">
+        <p>
+          par
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          seq
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+        </blockquote>
+        <p>
+          Children are animated in sequence. Each child <strong>must</strong> have its dur set or the default
+          (Infinity) is assumed and the next child will never animate.
+      </div>
+      <h3>Actor Elements</h3>
+      <div class="definition">
+        <p>
+          <em>event attribute set</em>
+        <blockquote>
+          <p>onclick = <em>scriptlet (see below)</em>; <em>default none</em>
+          <p>onenter = <em>scriptlet (see below)</em>; <em>default none</em>
+          <p>onexit = <em>scriptlet (see below)</em>; <em>default none</em>
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          scene
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+          <p><em>event attribute set</em>
+          <p>x = <em>left edge; integer; default</em> 0
+          <p>y = <em>top edge; integer; default</em> 0
+          <p>width<em> = width in pixels; integer; default none (no clipping)</em>
+          <p>height<em> = width in pixels; integer; default none (no clipping)</em>
+          <p>scale = <em>scale factor; double; default</em> 1.0
+          <p>bgcolor = <em>background color; hexadecimal (rrggbb); default none</em>
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          text
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+          <p><em>event attribute set</em>
+          <p>text = <em>text to display; default none; <strong>required</strong></em>
+          <p>x = <em>left edge of text; integer; default</em> 0
+          <p>y = <em>top edge of text (not baseline); integer; default</em> 0
+          <p>scale = <em>scale factor; double; default</em> 1.0
+          <p>bgcolor = <em>background color of text; hexadecimal (rrggbb); default none</em>
+          <p>color = <em>color of text; hexadecimal (rrggbb); default</em> white
+          <p>family = "Serif" | "SansSerif" | "Monospaced"; <em>default</em> "SansSerif"
+          <p>size = <em>font size, in points; double; default</em> 10
+          <p>weight = "normal" | "bold"; <em>default</em> "normal"
+          <p>style = "normal" | "italic"; <em>default</em> "normal"
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          vector
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+          <p><em>event attribute set</em>
+          <p>points = <em>path-points (see below)</em>; <em><strong>required</strong></em>
+          <p>x = <em>origin; integer; default</em> 0
+          <p>y = <em>origin; integer; default</em> 0
+          <p>scale = <em>scale factor; double; default</em> 1.0
+          <p>angle = <em>angle of rotation, in degrees; double; default</em> 0.0
+          <p>linecolor = <em>RGB outline color; hexadecimal (rrggbb); default none</em>
+          <p>fillcolor = <em>RGB fill color; hexadecimal (rrggbb); default none</em>
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          bitmap
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+          <p><em>event attribute set</em>
+          <p>src= <em>URL of image; <strong>required</strong></em>
+          <p>x = <em>center position of image; integer; default</em> 0
+          <p>y = <em>center position of image; integer; default</em> 0
+          <p>width<em> = width in pixels; integer; default none (natural size)</em>
+          <p>height<em> = width in pixels; integer; default none (natural size)</em>
+
+          <p>scale = <em>scale factor; double; default</em> 1.0
+          <p>angle = <em>angle of rotation, in degrees; double; default</em> 0.0
+          <p>hframes = <em>number of frames in horizontal image strip or grid; integer; default</em> 1
+          <p>vframes = <em>number of frames in vertical image strip or grid; integer; default</em> 1
+          <p>rate = <em>frames per second; double; default</em> 1.0
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          sound
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+          <p>src= <em>URL of audio file; <strong>required</strong></em>
+        </blockquote>
+      </div>
+      <h3>Behavior Elements</h3>
+      <div class="definition">
+        <p>
+          <em>behavior attribute set</em>
+        <blockquote>
+          <p>actor = <em>target_id</em> ; <em>default none (behavior operates on parent element)</em>
+
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          path
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+          <p><em>behavior attribute set</em>
+          <p>points = <em>path-points (see below)</em>; <em><strong>required</strong></em>
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          scale
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+          <p><em>behavior attribute set</em>
+          <p>initialScale = <em>initial scale; double; default</em> 1.0
+          <p>finalScale = <em>final scale; double; default</em> 1.0
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          rotate
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+          <p><em>behavior attribute set</em>
+          <p>initialAngle = <em>initial scale, in degrees; double; default</em> 0.0
+          <p>finalAngle = <em>final scale, in degrees; double; default</em> 0.0
+        </blockquote>
+        <p>
+          Rotate only functions on Vector, Bitmap and Text actors. Rotations on Bitmap and Text are
+          performed in software and allocate a new image each frame and are relatively slow.
+      </div>
+      <div class="definition">
+        <p>
+          color
+        <blockquote>
+          <p><em>core attribute set</em>
+          <p><em>timing attribute set</em>
+          <p><em>behavior attribute set</em>
+          <p>colorProp = <em>color property to animate; default</em> "color"
+          <p>initialColor = <em>initial scale, in degrees; double; default none (use current color)</em>
+          <p>finalColor = <em>final scale, in degrees; double; default none (use current color)</em>
+
+        </blockquote>
+      </div>
+
+      <h3>Detailed Attribute Syntax</h3>
+      <div class="definition">
+        <p>
+          <em>scriptlet</em>
+        <blockquote>
+          <p>  scriptlet ::= statement [ ";" scriptlet ]
+          <p>  statement ::= <em>object</em> "." <em>member</em> [ "=" <em>parameter</em> ]
+          <p>Where <em>object</em> can be "window" or an element id. For elements, this becomes a call to <em>object</em>.onEvent( <em>member</em>, <em>parameter</em> ), where "start" and "stop" are natively
+            supported members. For "window", supported members are "href", and the parameter specifies a URL to navigate
+            the page to.
+        </blockquote>
+      </div>
+      <div class="definition">
+        <p>
+          <em>path-points</em>
+        <blockquote>
+          <p>path-points ::= (line | curve | end)*
+          <p>line ::= ("m"|"l") <var>x</var> <var>y</var>
+          <p>curve ::= ("c"|"v") <var>x1</var> <var>y1</var> <var>x2</var> <var>y2</var> <var>x3</var> <var>y3</var>
+          <p>end ::= ("x"|"e")
+          <p>"m" and "l" specify a straight line to the next coordinate
+          <p>"c" and "v" specify a Bezier curve with the current point and the next 3 coordinates
+          <p>"x" and "e" end the path
+        </blockquote>
+      </div>
+      <h3>Source</h3>
+      <ul>
+        <li>
+          <a href="Anim.java">Anim.java</a> - the full animation runtime
+        <li>
+          <a href="Extension.java">Extension.java</a> - a sample extension class - it draws an oval
+      </ul>
+
+      <h3>Examples</h3>
+      <div class="aside">
+        Obviously, you need a Java runtime installed to view these. From about 1996 through 2008
+        that was pretty much guaranteed if you were viewing this Web page.
+      </div>
+      <p>
+        These suck, as they were hand-coded. I suppose that's why we thought they was money in creating
+        authoring tools. Note that the applet these reference is actually compiled with debugging output,
+        symbols, and no optimization, so it's actually closer to 30k in size than 20k in size.
+      <ul>
+        <li>
+          <a href="Sample.htm">Basic sample</a> (<a href="example.xml">source</a>), showing scale, rotation, and path behaviors on an image
+        <li>
+          <a href="ExtensionSample.htm">Extension sample</a> (<a href="extension_sample.xml">source</a>), showing an extension class (renders an oval)
+        <li>
+          <a href="TestSample.htm">Obnoxious sample</a> (<a href="test_big.xml">source</a>), with pretty much one of everything including an
+          annoying cat sound
+        <li>
+          <a href="InteractiveSample.htm">Interactive sample</a> (<a href="interactive.xml">source</a>), with roll-over effects
+      </ul>
+      <h3>Performance</h3>
+      <p>
+        The current implementation has performance issues when rotating images and text. This is done by allocating
+        new pixel arrays and images. In the case of images, one new pixel array and new image is allocated for each
+        rotated frame. In the case of text, three new pixel arrays and images are allocated - the first to render
+        text to a surface, the second to produce an image with an alpha channel, the third to produce the rotated
+        image. This takes the time to render a test frame from 30-40ms to 100-200ms (a reduction from 25fps to 5fps).
+
+      <p>
+        Ways to improve performance:
+      <ul>
+        <li>
+          Don't allow rotations on text, images, or both
+
+        <li>
+          Document the performance problem and let authors decide
+
+        <li>
+          Cache the pixel arrays - this is half of the memory allocation. For images this is half the allocation
+          time. For text this will be problematic if scaling or color shifting occurs since alpha image generation
+          outputs the scaled text using native text rendering.
+
+        <li>
+          For text, combine the alpha channel generation and rotation into a single step.
+
+        <li>
+          Switch the entire render channel to use MemoryImageSource and take over rendering of all pixels. This
+          will allow for higher fidelity animations (e.g. anti-aliasing) but at the cost of having to render text,
+          images and vector shapes pixel by pixel, which implies more code.
+
+        <li>
+          Since scaling is handled by AWT, and we know the max bounds of a rotated image (sqrt(w*h) x sqrt(w*h))
+          the allocations (the slow parts) could be eliminated. For text that isn't scaled or color-cycled the
+          same optimization could be used.
+
+        <li>
+          For text: render text at some huge size and use image processing and scaling to render it.
+
+        <li>
+          Potentially keep a large "working bitmap" for rendering scaled/rotated text, to avoid allocations. Difficult
+          to know how (e.g.) text will be "zoomed" and what part might be rendered
+
+        <li>
+          Idea: keep a couple of offscreen buffers; allocate them to 1.5 times the size needed on use. Each time
+          they are used, reallocate if they're not large enough. So if there is no text scaling or text/image
+          rotation, they'll never allocate. Otherwise they'll grow to the necessary size. The down side is that
+          the coordinates will be offset, and they need to be cleared before use.
+
+        <li>
+          There's a potential fork to be decided on - should the animation pipeline be primarily vector driven
+          or pixel driven?
+          <ul>
+            <li>When pixel driven, each scene would render to a surface. When the scene is scaled, rotated,
+              etc. there is a pixel copy operation. This would make filters easy, but scaled content looks
+              rougher.
+
+            <li>When vector driven, there is a transform matrix in place at all times; rendering occurs to a
+              single surface with scaling of the points (etc) happening before any pixel hits a buffer. Filters
+              are much harder to render, but the overall quality of nested, scaled content is much higher.
+
+            <li>Currently, the pipeline avoids this; scaled scenes are not supported so scaling happens per
+              media type, and no transforms are supported. (This is on par with the Java-based Liquid Motion
+              runtime; the DirectAnimation-based runtime was (I believe) pixel driven)
+          </ul>
+
+      </ul>
+      <h3>Future Work / ToDo</h3>
+      <ul>
+        <li>Specify encoding (UTF-8)
+        <li>Define escaping mechanism for double-quotes in strings.
+        <li>Full SMIL timing model. An important animation trick is to animate backwards - e.g. instead of trying to have the letters of
+          a word fly together and magically arrive at the same time, start with the letters together, explode
+          them apart, and then run the whole thing in reverse. So we need time scaling, including negative time.
+        <li>Move to the SMIL model of having generic <em>animate</em> and <em>set</em> behaviors. While this would
+          make hand-authoring of animation files more complex (to scale an image implies animating both width
+          and height properties; to scale text you instead animate a fontSize property), it will probably save
+          on code size, which is the whole point of this exercise.
+        <li>Thread control uses deprecated suspend/resume/stop paradigm; update to a state machine
+        <li>Add a particle actor as an extension (optional class dynamically loaded) as proof-of-concept for add-ins.
+        <li>Add some decent demos
+        <li>Write a Liquid Motion of Vizact translator so I can get some decent demos without having to
+          hand-code them!
+        <li>Extend applet model to decouple the Applet from the root content element, and allow chaining - e.g. applet.href="newfile.xml"
+      </ul>
+    </div>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18610679-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>

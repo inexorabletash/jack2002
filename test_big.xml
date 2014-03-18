@@ -1,0 +1,134 @@
+<scene width="500" height="400" bgcolor="000040">
+	<text
+		dur="10"
+		x="100"
+		y="100"
+		text="This is a &lt;&gt;&quot;&amp; test..."
+		family="Serif"
+		size="80"
+		weight="bold"
+		style="italic"
+		color="ff0000"
+	>
+		<scale dur="10" finalScale=".1" />
+		<path
+		    repeatCount="5"
+			dur="2"
+			points="m 450.0 0.0 m -250.0 0.0 x"
+		/>
+	</text>
+	<text
+		x="300"
+		y="200"
+		text="Rotating text..."
+		family="Serif"
+		size="60"
+		color="ff0000"
+	>
+		<rotate dur="10" finalAngle="360" />
+	</text>
+	<sound id="meow"  begin="2" dur="6" repeatCount="10" src="meow.au" />
+	<sound id="chomp" begin="5" dur="6" repeatCount="10" src="chomp.au" />
+	<bitmap
+	    id="bitmap1"
+		x="200"
+		y="100"
+		src="sign.gif"
+	>
+		<scale dur="4" finalScale="5" />
+		<path
+			dur="4"
+			fill="hold"
+			points=
+				"m 0.0 0.0
+				c	11.7	-10.6	18.4	-5.4	25.3	2.6
+				c	29.6	7.6	27.8	14.0	24.2	19.4
+				c	18.3	28.3	6.1	26.5	-3.0	21.0
+				c	-15.6	13.3	-14.8	-3.9	-7.3	-16.5
+				c	2.4	-32.7	24.4	-33.0	40.6	-23.4
+				c	60.4	-11.7	61.9	14.9	50.2	34.7
+				c	36.4	58.1	5.1	60.8	-18.3	47.0
+				c	-45.3	31.2	-49.2	-4.8	-33.3	-31.8
+				c	-15.3	-62.3	25.3	-67.4	55.9	-49.5
+				c	90.0	-29.4	96.3	15.9	76.2	50.0
+				c	54.1	87.7	4.2	95.2	-33.6	73.1
+				c	-74.9	48.8	-83.6	-5.7	-59.3	-47.1
+				c	-33.0	-92.0	26.2	-101.9	71.1	-75.5
+				c	119.6	-47.0	130.8	16.8	102.3	65.3
+				c	71.7	117.4	3.2	129.7	-48.8	99.1
+				c	-102.7	67.4	-120.7	-1.9	-89.2	-55.8
+				e"
+		/>
+	</bitmap>
+	<bitmap
+		x="200"
+		y="200"
+		onclick="meow.start"
+		src="sign.gif"
+	>
+		<rotate dur="12" finalAngle="720" />
+	</bitmap>
+	<vector
+	    id="vec1"
+		x="80"
+		y="80"
+		fillcolor="808080"
+		onclick="meow.start"
+		points=
+				"m	0.0	0.0
+				c	-7.1	-2.7	-14.8	-4.2	-22.9	-4.2
+				c	-58.2	-4.2	-86.9	24.5	-86.9	59.8
+				c	-86.9	95.1	-58.2	123.8	-22.9	123.8
+				c	-14.8	123.8	-7.1	122.3	0	119.6
+				c	-24	110.4	-41.1	87.1	-41.1	59.8
+				c	-41.1	32.5	-24	9.2	0	0
+				x"
+	>
+		<color           dur="10" colorProp="fillcolor" finalColor="ff0000" />
+		<color begin="5" dur="10" colorProp="fillcolor" finalColor="ffff00" />
+	</vector>
+	<vector
+		id="vec2"
+		x="75"
+		y="75"
+		fillcolor="00ff00"
+		linecolor="0000ff"
+		points="
+					m 0.0 0.0
+					c    0.8     31.3    10.4    59.2    25.1    77.9
+					c   25.1    77.9    50.5    103.2   50.5    103.2
+					c   64.0    116.5   72.3    135.0   72.3    155.4
+					c   72.3    195.5   40.0    228.1   0.0     228.7
+					c  -40.0   228.1   -72.2   195.5   -72.2   155.4
+					c  -72.2   135.0   -63.9   116.5   -50.4   103.2
+					c  -50.4   103.2   -25.0   77.9    -25.0   77.9
+					c  -10.4   59.2    -0.8    31.3    0.0     0.0
+					x
+			   "
+	/>
+	<par dur="2" repeatCount="3" fill="hold">
+		<rotate actor="vec2" dur="1" finalAngle="360" />
+		<path
+			actor="vec2"
+			dur="3"
+			points="
+						m 0.0 0.0
+						c    0.8     31.3    10.4    59.2    25.1    77.9
+						c   25.1    77.9    50.5    103.2   50.5    103.2
+						c   64.0    116.5   72.3    135.0   72.3    155.4
+						c   72.3    195.5   40.0    228.1   0.0     228.7
+						c  -40.0   228.1   -72.2   195.5   -72.2   155.4
+						c  -72.2   135.0   -63.9   116.5   -50.4   103.2
+						c  -50.4   103.2   -25.0   77.9    -25.0   77.9
+						c  -10.4   59.2    -0.8    31.3    0.0     0.0
+						x
+				   "
+		/>
+	</par>
+	<seq dur="4" repeatCount="4">
+		<path actor="vec1" dur="1" points="[m,(0,0)] [l,( 100,   0)]" />
+		<path actor="vec1" dur="1" points="[m,(0,0)] [l,(   0, 100)]" />
+		<path actor="vec1" dur="1" points="[m,(0,0)] [l,(-100,   0)]" />
+		<path actor="vec1" dur="1" points="[m,(0,0)] [l,(   0,-100)]" />
+	</seq>
+</scene>
